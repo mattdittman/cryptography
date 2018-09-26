@@ -9,10 +9,9 @@ def Challenge_1(hexVal):
 
 #Fixed XOR
 def Challenge_2(a, b):
-    b1 = bytearray(codecs.decode(a, 'hex'))
-    b2 = bytearray(codecs.decode(b, 'hex'))
-    b = bytes([x ^ y for x, y in zip(b1, b2)])
-    return codecs.encode(b, "hex").decode('utf8')
+    xor_bytearray = crypto.FixedXorFromHex(a, b)
+    return codecs.encode(xor_bytearray, "hex").decode('utf8')
+    #return crypto.FixedXorFromHex(a, b)
 
 #Single-byte XOR Cipher
 def Challenge_3(hexString):
@@ -80,13 +79,8 @@ def Challenge_8(textFile):
         content = f.readlines() 
     content = [x.strip() for x in content]
     for line in content:
-        repeats = 0
-        chunks = crypto.DivideIntoChunks(line, 16, 0)
-        for c in chunks:
-            if chunks.count(c) > 1:
-                #more than one occurance of 16 byte segment; probably ECB
-                repeats += 1
-        if repeats > 0:
+        testResult = crypto.Detect_ECB_Encryption(line)
+        if testResult == True:
             results.append(line)
     assert len(results) == 1
     return results[0]
@@ -106,11 +100,12 @@ c3_answer = Challenge_3("1b37373331363f78151b7f2b783431333d78397828372d363c78373
 assert c3_answer == "Cooking MC's like a pound of bacon"
 print("Challenge 3 Pass")
 
+'''
 #Detect single-character XOR (takes a long time)
 c4_answer = Challenge_4("Challenge4.txt")
 assert c4_answer == "Now that the party is jumping"
 print("Challenge 4 Pass")
-
+'''
 #Implement repeating-key XOR
 c5_answer = Challenge_5(["Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"], "ICE")
 assert c5_answer[0] == "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
